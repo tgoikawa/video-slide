@@ -1,0 +1,184 @@
+<section>
+
+<h2>案件で使える動画配信の知識</h2>
+
+<p>及川 康祐</p>
+
+</section>
+<section>
+
+<h2>経緯</h2>
+
+<ul>
+  <li>案件で動画関係に携わることがあった</li>
+  <li>社内で動画に詳しい人が少ないので共有する必要性を感じた</li>
+</ul>
+
+</section>
+<section>
+
+<h2>動画配信の種類</h2>
+
+<ul>
+  <li>mp4ファイルをhttpsで配信
+    <ul>
+      <li>mp4ファイルをhttpsで配信する。非ライブ配信で使われる。楽。</li>
+    </ul>
+  </li>
+  <li>ストリーミング配信
+    <ul>
+      <li>色々種類が多すぎるので今回は割愛</li>
+    </ul>
+  </li>
+</ul>
+
+<p>今日はmp4ファイルをhttpsで配信することに関して話します</p>
+
+</section>
+<section>
+
+<h2>mp4ファイルで配信するのは何が嬉しいか</h2>
+
+</section>
+<section>
+
+<ul>
+  <li>
+    <p>GCSにファイル配置してURL参照するだけ</p>
+  </li>
+  <li>ブラウザで再生する場合videoタグでURL指定するだけ
+    <pre><code class="language-html">&lt;video src="https://domain/sample.mp4"&gt;&lt;/video&gt;
+</code></pre>
+  </li>
+  <li>署名付きURLを使用すればセキュリティ上の安全性も確保しやすい</li>
+</ul>
+
+</section>
+<section>
+
+<h3>ファイルダウンロード仕切るまで再生できないのでは?🤔</h3>
+
+</section>
+<section>
+
+<h3>そんなこたーない</h3>
+
+<ul>
+  <li>主要なブラウザはmp4ファイルをプログレッシブダウンロードすることができる。</li>
+</ul>
+
+</section>
+<section>
+<section>
+
+<h3>プログレッシブダウンロードとは?</h3>
+
+<ul>
+  <li>
+    <p>ストリーミングと同じようにデータをダウンロードしながら再生すること(疑似ストリーミング再生とも)</p>
+  </li>
+  <li>
+    <p>プログレッシブダウンロードしやすいようにmp4の形式を変更してやる必要がある<br>
+→ ffmpegを使う</p>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h3>プログレッシブダウンロードしやすい形式</h3>
+
+<p>mp4のメタデータであるmoov atomをmp4ファイルの先頭に配置してやる必要がある。おそらくmoov atom内に各動画セグメントのサイズ情報があると思われる。</p>
+
+</section>
+</section>
+
+<section>
+<section>
+
+<h3>ffmepgについて</h3>
+
+<ul>
+  <li>動画関係ならなんでもできる便利ツール</li>
+  <li>よくアーミーナイフに例えられる<br>
+<img src="59756310-69ee9700-92c4-11e9-93ac-959fd9a74455.jpg" alt="アーミーナイフ">
+</li>
+</ul>
+
+</section>
+<section>
+
+<p>なお実際は・・・</p>
+
+<p><img src="02_px400.jpg" alt="アーミーナイフ2"></p>
+
+</section>
+<section>
+
+<p>(^q^)</p>
+
+</section>
+</section>
+<section>
+
+<h3>moov atomを先頭に配置する</h3>
+<p>以下のコマンドを実行する</p>
+<pre><code class="language-sh">$ ffmpeg -i input.mp4 -c copy -movflags +faststart output.mp4
+</code></pre>
+
+</section>
+<section>
+
+<p>プログレッシブダウンロードしても動画再生が重い時</p>
+
+<ul>
+  <li>まず画質が良すぎることを疑う
+    <ul>
+      <li>解像度・ビットレートを下げることを検討する</li>
+    </ul>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h3>画質の変更の仕方</h3>
+<p>ffmpegで変換する<br>
+※解像度を640x480,動画のビットレートを768kbpsに変換する例</p>
+<pre><code class="language-sh">$ ffmpeg -i input.mp4 -s 640x480 -vb 768k output.mp4
+</code></pre>
+
+</section>
+<section>
+
+<h3>画質の変更のコツてきなもの</h3>
+
+<ul>
+  <li>解像度は再生するUIに合わせる。
+    <ul>
+      <li>例えば再生するvideoのサイズが640x480なのに元の動画の解像度が1280x720だった場合無駄に良すぎるので再生する予定のサイズに合わせる</li>
+    </ul>
+  </li>
+  <li>
+    <p>ビットレートは妥協できる範囲を手探りでさがす</p>
+  </li>
+  <li>fpsは変更しない
+    <ul>
+      <li>慣れていないと痛い目をみるため</li>
+    </ul>
+  </li>
+</ul>
+
+</section>
+<section>
+
+<h3>画質下げても重い時</h3>
+<ul>
+  <li>CDN使う
+    <ul>
+      <li>調べた感じユーザー数1万とか割と小規模な動画配信サービスでもCDN使ってることが多い印象</li>
+    </ul>
+  </li>
+</ul>
+
+</section>
