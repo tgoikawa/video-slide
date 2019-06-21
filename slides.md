@@ -100,7 +100,7 @@ $ ffmpeg -i input.mp4 -c copy -movflags +faststart output.mp4
 
 まず画質が良すぎることを疑う
   - 解像度・ビットレートを下げることを検討する
-	- 音質が良すぎないか確認
+  - 音質が良すぎないか確認
 
 
 ---
